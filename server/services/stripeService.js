@@ -92,7 +92,7 @@ module.exports = ({ strapi }) => ({
       throw new ApplicationError(error.message);
     }
   },
-  async updateProduct(id, title, url, description, productImage, stripeProductId) {
+  async updateProduct(id, title, url, description, productImage, stripeProductId, updatePrice = false, stripePriceId = null, price = null) {
     try {
       const stripeSettings = await this.initialize();
       let stripe;
@@ -107,12 +107,18 @@ module.exports = ({ strapi }) => ({
         description,
         images: [url],
       });
+      if (updatePrice && stripePriceId && price) {
+        const stripePrice = await stripe.prices.update(stripePriceId, {
+          unit_amount: Math.round(price * 100),
+        });
+      }
       const updateProductResponse = await strapi.query('plugin::strapi-stripe.ss-product').update({
         where: { id },
         data: {
           title,
           description,
           productImage,
+          ...(updatePrice && stripePriceId && price && { price})
         },
       });
       return updateProductResponse;

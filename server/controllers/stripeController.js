@@ -64,11 +64,11 @@ module.exports = {
 
   async updateProduct(ctx) {
     const { id } = ctx.params;
-    const { title, url, description, productImage, stripeProductId } = ctx.request.body;
+    const { title, url, description, productImage, stripeProductId, stripePriceId, price } = ctx.request.body;
     const updateProductResponse = await strapi
       .plugin('strapi-stripe')
       .service('stripeService')
-      .updateProduct(id, title, url, description, productImage, stripeProductId);
+      .updateProduct(id, title, url, description, productImage, stripeProductId, stripePriceId, price);
     ctx.send(updateProductResponse, 200);
   },
 
