@@ -216,4 +216,31 @@ module.exports = {
       console.error(error);
     }
   },
+
+  async getCheckoutSession(ctx) {
+    try {
+      const { id, email } = ctx.params;
+      const res = await strapi
+        .query('plugin::strapi-stripe.ss-product')
+        .findOne({ where: { id }, populate: true });
+
+      if (res) {
+        const checkoutSessionResponse = await strapi
+          .plugin('strapi-stripe')
+          .service('stripeService')
+          .createCheckoutSession(
+            res.stripePriceId,
+            res.stripePlanId,
+            res.isSubscription,
+            res.stripeProductId,
+            res.title,
+            email
+          );
+
+        ctx.send({ ...checkoutSessionResponse }, 200);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 };

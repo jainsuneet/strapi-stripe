@@ -99,4 +99,12 @@ module.exports = [
       auth: false,
     },
   },
+  {
+    method: 'GET',
+    path: '/getCheckoutSession/:id/:email',
+    handler: 'stripeController.getCheckoutSession',
+    config: {
+      auth: false,
+    },
+  },
 ];
