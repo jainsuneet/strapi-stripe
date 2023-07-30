@@ -244,4 +244,21 @@ module.exports = ({ strapi }) => ({
       throw new ApplicationError(error.message);
     }
   },
+
+  // cancel subscription by subscription id
+  async cancelSubscription(subscriptionId) {
+    try {
+      const stripeSettings = await this.initialize();
+      let stripe;
+      if (stripeSettings.isLiveMode) {
+        stripe = new Stripe(liveStripeKey);
+      } else {
+        stripe = new Stripe(testStripeKey);
+      }
+      const subscription = await stripe.subscriptions.cancel(subscriptionId);
+      return subscription;
+    } catch (error) {
+      throw new ApplicationError(error.message);
+    }
+  }
 });

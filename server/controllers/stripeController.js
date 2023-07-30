@@ -242,5 +242,14 @@ module.exports = {
     } catch (error) {
       console.error(error);
     }
+  },
+
+  async cancelSubscription(ctx) {
+    const { subscription } = ctx.params;
+    const cancelSubscriptionResponse = await strapi
+      .plugin('strapi-stripe')
+      .service('stripeService')
+      .cancelSubscription(subscription);
+    ctx.send(cancelSubscriptionResponse, 200);
   }
 };
