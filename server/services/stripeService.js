@@ -246,7 +246,7 @@ module.exports = ({ strapi }) => ({
   },
 
   // cancel subscription by subscription id
-  async cancelSubscription(subscriptionId) {
+  async cancelSubscription(subscriptionId, optionalParams = {}, refund = {}) {
     try {
       const stripeSettings = await this.initialize();
       let stripe;
@@ -255,8 +255,17 @@ module.exports = ({ strapi }) => ({
       } else {
         stripe = new Stripe(testStripeKey);
       }
-      const subscription = await stripe.subscriptions.cancel(subscriptionId);
-      return subscription;
+      const subscription = await stripe.subscriptions.del(subscriptionId, { ...optionalParams });
+      let refundResponse = {
+        refundRequested: false
+      };
+      if (refund.refund) {
+        refundResponse = await stripe.refunds.create({
+          amount: refund.refundAmount,
+          payment_intent: subscriptionId
+        });
+      }
+      return { subscription, refundResponse };
     } catch (error) {
       throw new ApplicationError(error.message);
     }

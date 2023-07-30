@@ -245,11 +245,12 @@ module.exports = {
   },
 
   async cancelSubscription(ctx) {
-    const { subscription } = ctx.params;
+    const { subscription, optionalParams = {}, refund = {} } = ctx.params;
     const cancelSubscriptionResponse = await strapi
       .plugin('strapi-stripe')
       .service('stripeService')
-      .cancelSubscription(subscription);
-    ctx.send(cancelSubscriptionResponse, 200);
+      .cancelSubscription(subscription, optionalParams, refund);
+
+    ctx.send({ ...cancelSubscriptionResponse }, 200);
   }
 };
