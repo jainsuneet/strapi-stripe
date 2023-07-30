@@ -260,9 +260,13 @@ module.exports = ({ strapi }) => ({
         refundRequested: false
       };
       if (refund.refund) {
+        const invoices = await stripe.invoices.list({
+          limit: 1,
+          subscription: subscriptionId
+        })
         refundResponse = await stripe.refunds.create({
           amount: refund.refundAmount,
-          payment_intent: subscriptionId
+          charge: invoices.data[0].charge
         });
       }
       return { subscription, refundResponse };
