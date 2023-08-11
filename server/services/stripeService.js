@@ -163,12 +163,12 @@ module.exports = ({ strapi }) => ({
         paymentMode = 'payment';
       }
 
-      const price = await stripe.prices.retrieve(priceId);
+      // const price = await stripe.prices.retrieve(priceId);
       //payment Methods
-      const PaymentMethods = await strapi
-        .plugin('strapi-stripe')
-        .service('paymentMethodService')
-        .getPaymentMethods(isSubscription, price.currency, stripeSettings.paymentMethods);
+      // const PaymentMethods = await strapi
+      //   .plugin('strapi-stripe')
+      //   .service('paymentMethodService')
+      //   .getPaymentMethods(isSubscription, price.currency, stripeSettings.paymentMethods);
 
       // Create Checkout Sessions.
       const session = await stripe.checkout.sessions.create({
@@ -180,7 +180,7 @@ module.exports = ({ strapi }) => ({
           },
         ],
         mode: paymentMode,
-        payment_method_types: [...PaymentMethods],
+        // payment_method_types: [...PaymentMethods],
         customer_email: userEmail,
         allow_promotion_codes: stripeSettings.allowPromotionCode,
         success_url: `${stripeSettings.checkoutSuccessUrl}?sessionId={CHECKOUT_SESSION_ID}`,
